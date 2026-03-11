@@ -175,7 +175,7 @@ function App() {
             className="hero-logo"
           />
           <div className="hero-title-compact">
-            Goa Float & Flaunt
+            Goa Float & Flaunt (Test)
           </div>
           <div className="hero-senior-badge">
             <span className="badge-icon">🌟</span>

@@ -24,6 +24,7 @@ function App() {
   const [answers, setAnswers] = useState({})
   const [isTransitioning, setIsTransitioning] = useState(false)
   const [isFlying, setIsFlying] = useState(false)
+  const [showPriceAnimation, setShowPriceAnimation] = useState(false)
   const particlesRef = useRef(null)
   const TOTAL_SCREENS = 11
 
@@ -134,7 +135,11 @@ function App() {
     const isValid = validateForm()
 
     if (isValid) {
-      goToScreen(9)
+      setShowPriceAnimation(true)
+      setTimeout(() => {
+        setShowPriceAnimation(false)
+        goToScreen(9)
+      }, 2500)
     }
   }
 
@@ -151,6 +156,18 @@ function App() {
 
   return (
     <>
+      {/* Price Animation Overlay */}
+      {showPriceAnimation && (
+        <div className="price-animation-overlay">
+          <div className="price-animation-content">
+            <div className="price-old-animated">₹21,999</div>
+            <div className="price-arrow-animated">↓</div>
+            <div className="price-new-animated">₹19,999</div>
+            <div className="price-save-text">You Save ₹2,000!</div>
+          </div>
+        </div>
+      )}
+
       {/* Progress Bar */}
       <div className="progress-bar" style={{ width: progressWidth }} />
 
@@ -185,7 +202,7 @@ function App() {
           <div className="hero-trust-box">
             <div className="trust-item">
               <span className="trust-icon">🏥</span>
-              <span className="trust-text">24*7 Medical<br/>Support</span>
+              <span className="trust-text">24/7 Medical<br/>Support</span>
             </div>
             <div className="trust-sep"></div>
             <div className="trust-item">
@@ -236,10 +253,6 @@ function App() {
               <span className="act-num"><CircleDollarSign size={18} strokeWidth={1.5} /></span>
               <span className="act-text">Floating Casino on Mandovi</span>
             </div>
-            <div className="act">
-              <span className="act-num"><Music size={18} strokeWidth={1.5} /></span>
-              <span className="act-text">Live entertainment & dinner</span>
-            </div>
           </div>
           <button className="btn-next" onClick={() => goToScreen(2)}>
             Day 2 awaits &nbsp;→
@@ -259,24 +272,20 @@ function App() {
           <div className="day-mood">Beaches, forts & thrilling watersports.</div>
           <div className="acts">
             <div className="act">
-              <span className="act-num"><Sunset size={18} strokeWidth={1.5} /></span>
-              <span className="act-text">Baga & Anjuna beaches</span>
-            </div>
-            <div className="act">
               <span className="act-num"><Ship size={18} strokeWidth={1.5} /></span>
-              <span className="act-text">Thrilling watersports package</span>
-            </div>
-            <div className="act">
-              <span className="act-num"><Building2 size={18} strokeWidth={1.5} /></span>
-              <span className="act-text">Fort Aguada & Sinquerim</span>
+              <span className="act-text">Thrilling Watersports</span>
             </div>
             <div className="act">
               <span className="act-num"><Utensils size={18} strokeWidth={1.5} /></span>
               <span className="act-text">Lunch at GOAT restaurant</span>
             </div>
+            <div className="act">
+              <span className="act-num"><Sunset size={18} strokeWidth={1.5} /></span>
+              <span className="act-text">Baga & Anjuna beaches</span>
+            </div>
           </div>
           <button className="btn-next" onClick={() => goToScreen(3)}>
-            Day 3 &nbsp;→
+            Beaches & Watersports &nbsp;→
           </button>
         </div>
       </div>
@@ -293,24 +302,20 @@ function App() {
           <div className="day-mood">UNESCO sites & luxury cruise.</div>
           <div className="acts">
             <div className="act">
+              <span className="act-num"><ShipWheel size={18} strokeWidth={1.5} /></span>
+              <span className="act-text">Luxurious Party Cruise</span>
+            </div>
+            <div className="act">
               <span className="act-num"><Building2 size={18} strokeWidth={1.5} /></span>
-              <span className="act-text">UNESCO World Heritage churches</span>
+              <span className="act-text">UNESCO World Heritage</span>
             </div>
             <div className="act">
               <span className="act-num"><Leaf size={18} strokeWidth={1.5} /></span>
               <span className="act-text">Spice plantation with lunch</span>
             </div>
-            <div className="act">
-              <span className="act-num"><Sunset size={18} strokeWidth={1.5} /></span>
-              <span className="act-text">Dona Paula & Miramar</span>
-            </div>
-            <div className="act">
-              <span className="act-num"><ShipWheel size={18} strokeWidth={1.5} /></span>
-              <span className="act-text">Double Decker Party Cruise</span>
-            </div>
           </div>
           <button className="btn-next" onClick={() => goToScreen(4)}>
-            Final day &nbsp;→
+            Cruise Party &nbsp;→
           </button>
         </div>
       </div>
@@ -322,7 +327,7 @@ function App() {
         <div className="day-ghost">04</div>
         <div className="day-content anim-child">
           <div className="day-tag">Day 4 · March 30</div>
-          <span className="day-emoji">🌊</span>
+          <span className="day-emoji">👋</span>
           <div className="wave-sep" />
           <div className="day-title">Smooth Departure</div>
           <div className="day-mood">Memories made. Hearts full.</div>
@@ -330,10 +335,6 @@ function App() {
             <div className="act">
               <span className="act-num"><Coffee size={18} strokeWidth={1.5} /></span>
               <span className="act-text">Leisurely breakfast</span>
-            </div>
-            <div className="act">
-              <span className="act-num"><Users size={18} strokeWidth={1.5} /></span>
-              <span className="act-text">Assisted check-out</span>
             </div>
             <div className="act">
               <span className="act-num"><Camera size={18} strokeWidth={1.5} /></span>
@@ -345,7 +346,7 @@ function App() {
             </div>
           </div>
           <button className="btn-next" onClick={() => goToScreen(5)}>
-            Book This Trip &nbsp;→
+            Final Day &nbsp;→
           </button>
         </div>
       </div>
@@ -473,6 +474,10 @@ function App() {
                 }}
               />
               {formErrors.phone && <div className="error-text">{formErrors.phone}</div>}
+              <div className="no-spam-badge">
+                <span className="badge-shield">🔒</span>
+                100% No Spam Policy
+              </div>
             </div>
             <button className="btn-submit" onClick={handleSubmit}>
               Book This Trip →

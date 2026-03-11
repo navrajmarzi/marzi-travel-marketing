@@ -196,7 +196,7 @@ function App() {
           </div>
           <div className="hero-senior-badge">
             <span className="badge-icon">🌟</span>
-            For 40+ Travellers
+            For Seniors Age 50+
           </div>
           
           <div className="hero-trust-box">

@@ -139,7 +139,7 @@ function App() {
   }
 
   const handleWhatsAppClick = () => {
-    const message = encodeURIComponent(`Hi! I'm interested in the Goa Float & Flaunt trip (March 27-30). I'd like to book at the special price of ₹37,999.`)
+    const message = encodeURIComponent(`Hi! I'm interested in the Goa Float & Flaunt trip (March 27-30). I'd like to book at the special price of ₹19,999.`)
     window.open(`https://wa.me/918792237778?text=${message}`, '_blank')
   }
 
@@ -179,7 +179,7 @@ function App() {
           </div>
           <div className="hero-senior-badge">
             <span className="badge-icon">🌟</span>
-            For Seniors Age 50+
+            For 40+ Travellers
           </div>
           
           <div className="hero-trust-box">
@@ -202,8 +202,8 @@ function App() {
           <div className="hero-spacer"></div>
 
           <div className="hero-price-marker">
-            <span className="price-label">₹39,999</span>
-            <span className="price-sub">Per Person</span>
+            <span className="price-label">₹21,999</span>
+            <span className="price-sub">Per Person · All Inclusive</span>
           </div>
           <button className={`btn-main ${isFlying ? 'flying' : ''}`} onClick={handleMainCTA}>
             <span className="btn-text">Explore the Journey →</span>
@@ -221,24 +221,24 @@ function App() {
           <div className="day-tag">Day 1 · March 27</div>
           <span className="day-emoji">🌅</span>
           <div className="wave-sep" />
-          <div className="day-title">Arrival & Welcome</div>
-          <div className="day-mood">"We take it from here."</div>
+          <div className="day-title">Arrival & Casino Night</div>
+          <div className="day-mood">"Your Goan escape begins."</div>
           <div className="acts">
             <div className="act">
               <span className="act-num"><Hotel size={18} strokeWidth={1.5} /></span>
-              <span className="act-text">Premium hotel</span>
+              <span className="act-text">3★ Hotel check-in</span>
             </div>
             <div className="act">
               <span className="act-num"><Utensils size={18} strokeWidth={1.5} /></span>
-              <span className="act-text">Welcome Goan dinner</span>
+              <span className="act-text">Buffet lunch at hotel</span>
             </div>
             <div className="act">
-              <span className="act-num"><Users size={18} strokeWidth={1.5} /></span>
-              <span className="act-text">Meet your Marzi family</span>
+              <span className="act-num"><CircleDollarSign size={18} strokeWidth={1.5} /></span>
+              <span className="act-text">Floating Casino on Mandovi</span>
             </div>
             <div className="act">
-              <span className="act-num"><Sunset size={18} strokeWidth={1.5} /></span>
-              <span className="act-text">Sunset promenade walk</span>
+              <span className="act-num"><Music size={18} strokeWidth={1.5} /></span>
+              <span className="act-text">Live entertainment & dinner</span>
             </div>
           </div>
           <button className="btn-next" onClick={() => goToScreen(2)}>
@@ -253,26 +253,26 @@ function App() {
         <div className="day-ghost">02</div>
         <div className="day-content anim-child">
           <div className="day-tag">Day 2 · March 28</div>
-          <span className="day-emoji">⛵</span>
+          <span className="day-emoji">🏖️</span>
           <div className="wave-sep" />
-          <div className="day-title">Float — The Sea</div>
-          <div className="day-mood">Private yacht & floating casino.</div>
+          <div className="day-title">North Goa Discovery</div>
+          <div className="day-mood">Beaches, forts & thrilling watersports.</div>
           <div className="acts">
             <div className="act">
+              <span className="act-num"><Sunset size={18} strokeWidth={1.5} /></span>
+              <span className="act-text">Baga & Anjuna beaches</span>
+            </div>
+            <div className="act">
               <span className="act-num"><Ship size={18} strokeWidth={1.5} /></span>
-              <span className="act-text">Private Yacht Cruise</span>
+              <span className="act-text">Thrilling watersports package</span>
             </div>
             <div className="act">
-              <span className="act-num"><Fish size={18} strokeWidth={1.5} /></span>
-              <span className="act-text">Seafood lunch on deck</span>
+              <span className="act-num"><Building2 size={18} strokeWidth={1.5} /></span>
+              <span className="act-text">Fort Aguada & Sinquerim</span>
             </div>
             <div className="act">
-              <span className="act-num"><CircleDollarSign size={18} strokeWidth={1.5} /></span>
-              <span className="act-text">Floating Casino evening</span>
-            </div>
-            <div className="act">
-              <span className="act-num"><Music size={18} strokeWidth={1.5} /></span>
-              <span className="act-text">Live music & cocktails</span>
+              <span className="act-num"><Utensils size={18} strokeWidth={1.5} /></span>
+              <span className="act-text">Lunch at GOAT restaurant</span>
             </div>
           </div>
           <button className="btn-next" onClick={() => goToScreen(3)}>
@@ -289,24 +289,24 @@ function App() {
           <div className="day-tag">Day 3 · March 29</div>
           <span className="day-emoji">🦚</span>
           <div className="wave-sep" />
-          <div className="day-title">Flaunt — Heritage</div>
-          <div className="day-mood">Old Goa & river cruise.</div>
+          <div className="day-title">South Goa Serenity</div>
+          <div className="day-mood">UNESCO sites & luxury cruise.</div>
           <div className="acts">
             <div className="act">
               <span className="act-num"><Building2 size={18} strokeWidth={1.5} /></span>
-              <span className="act-text">Old Goa Heritage Tour</span>
+              <span className="act-text">UNESCO World Heritage churches</span>
             </div>
             <div className="act">
               <span className="act-num"><Leaf size={18} strokeWidth={1.5} /></span>
-              <span className="act-text">Spice plantation walk</span>
+              <span className="act-text">Spice plantation with lunch</span>
             </div>
             <div className="act">
-              <span className="act-num"><Wine size={18} strokeWidth={1.5} /></span>
-              <span className="act-text">Portuguese mansion lunch</span>
+              <span className="act-num"><Sunset size={18} strokeWidth={1.5} /></span>
+              <span className="act-text">Dona Paula & Miramar</span>
             </div>
             <div className="act">
               <span className="act-num"><ShipWheel size={18} strokeWidth={1.5} /></span>
-              <span className="act-text">Double Decker Dinner Cruise</span>
+              <span className="act-text">Double Decker Party Cruise</span>
             </div>
           </div>
           <button className="btn-next" onClick={() => goToScreen(4)}>
@@ -324,24 +324,24 @@ function App() {
           <div className="day-tag">Day 4 · March 30</div>
           <span className="day-emoji">🌊</span>
           <div className="wave-sep" />
-          <div className="day-title">Farewell</div>
-          <div className="day-mood">Memories made. Stories to tell.</div>
+          <div className="day-title">Smooth Departure</div>
+          <div className="day-mood">Memories made. Hearts full.</div>
           <div className="acts">
             <div className="act">
               <span className="act-num"><Coffee size={18} strokeWidth={1.5} /></span>
-              <span className="act-text">Slow breakfast</span>
+              <span className="act-text">Leisurely breakfast</span>
             </div>
             <div className="act">
-              <span className="act-num"><ShoppingBag size={18} strokeWidth={1.5} /></span>
-              <span className="act-text">Local market stroll</span>
+              <span className="act-num"><Users size={18} strokeWidth={1.5} /></span>
+              <span className="act-text">Assisted check-out</span>
             </div>
             <div className="act">
               <span className="act-num"><Camera size={18} strokeWidth={1.5} /></span>
-              <span className="act-text">Farewell group moment</span>
+              <span className="act-text">Final group photos</span>
             </div>
             <div className="act">
               <span className="act-num"><Bus size={18} strokeWidth={1.5} /></span>
-              <span className="act-text">Comfortable AC departure</span>
+              <span className="act-text">Airport/Station transfer</span>
             </div>
           </div>
           <button className="btn-next" onClick={() => goToScreen(5)}>
@@ -492,9 +492,9 @@ function App() {
             Special Offer Unlocked!
           </div>
           <div className="price-comparison">
-            <div className="old-price">₹39,999</div>
+            <div className="old-price">₹21,999</div>
             <div className="arrow-down">↓</div>
-            <div className="new-price">₹37,999</div>
+            <div className="new-price">₹19,999</div>
           </div>
           <div className="price-cut-msg">
             <strong>Save ₹2,000</strong> if you book right now via WhatsApp.

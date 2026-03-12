@@ -255,11 +255,21 @@ function App() {
       const formattedDate = `${String(istTime.getDate()).padStart(2, '0')}-${String(istTime.getMonth() + 1).padStart(2, '0')}-${istTime.getFullYear()}`
       const formattedTime = istTime.toLocaleTimeString('en-IN', { hour12: false })
       
+      // Extract all UTM parameters from URL
+      const urlParams = new URLSearchParams(window.location.search)
+      const utmParams = {}
+      for (const [key, value] of urlParams.entries()) {
+        if (key.startsWith('utm_')) {
+          utmParams[key] = value
+        }
+      }
+      
       const webhookPayload = {
         submitted_time: `${formattedDate} ${formattedTime}`,
         name: formData.name,
         number: formData.phone,
-        age_range: getAgeRange()
+        age_range: getAgeRange(),
+        ...utmParams
       }
       
       try {

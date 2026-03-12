@@ -7,6 +7,29 @@ import {
 } from 'lucide-react'
 import './styles.css'
 
+// Generate unique external_id for user tracking
+const generateExternalId = () => {
+  return 'user_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9)
+}
+
+// Get or create external_id
+const getExternalId = () => {
+  let externalId = localStorage.getItem('marzi_external_id')
+  if (!externalId) {
+    externalId = generateExternalId()
+    localStorage.setItem('marzi_external_id', externalId)
+  }
+  return externalId
+}
+
+// Get fbc and fbp from cookies
+const getCookie = (name) => {
+  const value = `; ${document.cookie}`
+  const parts = value.split(`; ${name}=`)
+  if (parts.length === 2) return parts.pop().split(';').shift()
+  return null
+}
+
 const trackPageVisit = (pageName) => {
   if (typeof window === 'undefined' || !window.amplitude?.track) return
   window.amplitude.track(pageName)
@@ -15,6 +38,35 @@ const trackPageVisit = (pageName) => {
 const trackCTA = (ctaName) => {
   if (typeof window === 'undefined' || !window.amplitude?.track) return
   window.amplitude.track(ctaName)
+}
+
+// Meta Pixel tracking with advanced matching
+const trackMetaEvent = (eventName, userData = {}) => {
+  if (typeof window === 'undefined' || !window.fbq) return
+  
+  const advancedMatching = {
+    external_id: getExternalId(),
+    country: 'in'
+  }
+  
+  if (userData.name) {
+    const nameParts = userData.name.trim().split(' ')
+    advancedMatching.fn = nameParts[0]?.toLowerCase()
+    if (nameParts.length > 1) {
+      advancedMatching.ln = nameParts[nameParts.length - 1]?.toLowerCase()
+    }
+  }
+  
+  if (userData.phone) {
+    advancedMatching.ph = userData.phone.replace(/\D/g, '')
+  }
+  
+  const fbc = getCookie('_fbc')
+  const fbp = getCookie('_fbp')
+  if (fbc) advancedMatching.fbc = fbc
+  if (fbp) advancedMatching.fbp = fbp
+  
+  window.fbq('track', eventName, {}, advancedMatching)
 }
 
 function App() {
@@ -84,12 +136,13 @@ function App() {
   }
 
   const handleMainCTA = () => {
-    trackCTA('CTA Clicked')
     setIsFlying(true)
+    trackCTA('CTA Clicked: Explore Journey')
+    trackMetaEvent('AddToCart')
     setTimeout(() => {
       goToScreen(1)
       setIsFlying(false)
-    }, 1200)
+    }, 800)
   }
 
   const goToScreen = useCallback((toIdx) => {
@@ -102,14 +155,23 @@ function App() {
     }, 450)
   }, [currentScreen, isTransitioning])
 
-  const handleQuizPick = (question, value) => {
-    setAnswers(prev => ({ ...prev, [question]: value }))
+  const handleQuizPick = (question, answer) => {
+    setAnswers({ ...answers, [question]: answer })
+    trackEvent(`Option Selected: ${answer}`)
     
-    setTimeout(() => {
-      if (question === 'q1') {
-        value === 'under40' ? goToScreen(6) : goToScreen(8) // under 40 -> not qualified, else -> Form
+    if (question === 'q1') {
+      if (answer === 'under40') {
+        goToScreen(6)
+      } else {
+        goToScreen(8)
       }
-    }, 520)
+    }
+  }
+
+  const getAgeRange = () => {
+    if (answers.q1 === '50plus') return '50+'
+    if (answers.q1 === '40to50') return '40-50'
+    return '18-40'
   }
 
   const validateForm = () => {
@@ -131,21 +193,60 @@ function App() {
     return Object.keys(errors).length === 0
   }
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     const isValid = validateForm()
 
     if (isValid) {
       setShowPriceAnimation(true)
+      
+      // Send webhook to n8n
+      const now = new Date()
+      const istTime = new Date(now.toLocaleString('en-US', { timeZone: 'Asia/Kolkata' }))
+      const formattedDate = `${String(istTime.getDate()).padStart(2, '0')}-${String(istTime.getMonth() + 1).padStart(2, '0')}-${istTime.getFullYear()}`
+      const formattedTime = istTime.toLocaleTimeString('en-IN', { hour12: false })
+      
+      const webhookPayload = {
+        submitted_time: `${formattedDate} ${formattedTime}`,
+        name: formData.name,
+        number: formData.phone,
+        age_range: getAgeRange()
+      }
+      
+      try {
+        await fetch('https://marzi.app.n8n.cloud/webhook/ads-lead', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(webhookPayload)
+        })
+      } catch (error) {
+        console.error('Webhook error:', error)
+      }
+      
       setTimeout(() => {
         setShowPriceAnimation(false)
-        goToScreen(9)
+        setTimeout(() => {
+          goToScreen(9)
+        }, 100)
       }, 2500)
     }
   }
 
   const handleWhatsAppClick = () => {
-    const message = encodeURIComponent(`Hi! I'm interested in the Goa Float & Flaunt trip (March 27-30). I'd like to book at the special price of ₹19,999.`)
-    window.open(`https://wa.me/918792237778?text=${message}`, '_blank')
+    // Track Meta Purchase event only for 50+ age group
+    if (answers.q1 === '50plus') {
+      trackMetaEvent('Purchase', {
+        name: formData.name,
+        phone: formData.phone
+      })
+    }
+    
+    // Small delay to ensure pixel fires before redirect
+    setTimeout(() => {
+      const message = encodeURIComponent(`Hi! I'm interested in the Goa Float & Flaunt trip (March 27-30). I'd like to book at the special price of ₹19,999.`)
+      window.open(`https://wa.me/918792237778?text=${message}`, '_blank')
+    }, 300)
   }
 
   const firstName = formData.name.split(' ')[0] || 'friend'
@@ -194,9 +295,16 @@ function App() {
           <div className="hero-title-compact">
             Goa Float & Flaunt
           </div>
-          <div className="hero-senior-badge">
-            <span className="badge-icon">🌟</span>
-            For Seniors Age 50+
+          <div className="hero-eligibility-box">
+            <div className="eligibility-item">
+              <span className="eligibility-icon">📅</span>
+              <span className="eligibility-text">27 March</span>
+            </div>
+            <div className="eligibility-sep">•</div>
+            <div className="eligibility-item">
+              <span className="eligibility-icon">📍</span>
+              <span className="eligibility-text">Bangalore Only</span>
+            </div>
           </div>
           
           <div className="hero-trust-box">
@@ -272,20 +380,20 @@ function App() {
           <div className="day-mood">Beaches, forts & thrilling watersports.</div>
           <div className="acts">
             <div className="act">
-              <span className="act-num"><Ship size={18} strokeWidth={1.5} /></span>
-              <span className="act-text">Thrilling Watersports</span>
+              <span className="act-num"><Utensils size={18} strokeWidth={1.5} /></span>
+              <span className="act-text">Lunch At Signature Culinary Restaurant</span>
+            </div>
+            <div className="act">
+              <span className="act-num"><Users size={18} strokeWidth={1.5} /></span>
+              <span className="act-text">Games For Team Bonding</span>
             </div>
             <div className="act">
               <span className="act-num"><Utensils size={18} strokeWidth={1.5} /></span>
-              <span className="act-text">Lunch at GOAT restaurant</span>
-            </div>
-            <div className="act">
-              <span className="act-num"><Sunset size={18} strokeWidth={1.5} /></span>
-              <span className="act-text">Baga & Anjuna beaches</span>
+              <span className="act-text">Premium Buffet Dinner</span>
             </div>
           </div>
           <button className="btn-next" onClick={() => goToScreen(3)}>
-            Beaches & Watersports &nbsp;→
+            Beach Visits (Next Day) &nbsp;→
           </button>
         </div>
       </div>
@@ -315,7 +423,7 @@ function App() {
             </div>
           </div>
           <button className="btn-next" onClick={() => goToScreen(4)}>
-            Cruise Party &nbsp;→
+            Cruise Party (Next Day) &nbsp;→
           </button>
         </div>
       </div>
@@ -346,7 +454,7 @@ function App() {
             </div>
           </div>
           <button className="btn-next" onClick={() => goToScreen(5)}>
-            Final Day &nbsp;→
+            Book This Journey &nbsp;→
           </button>
         </div>
       </div>
@@ -397,11 +505,8 @@ function App() {
             This trip is for 40+ travellers
           </div>
           <div className="quiz-sub" style={{ color: 'rgba(255,253,248,0.5)' }}>
-            But we'd love to help you plan something perfect for your age group.
+            We appreciate your interest, but this specific trip is designed for travellers aged 40 and above.
           </div>
-          <button className="btn-next" style={{ marginTop: '28px' }} onClick={() => goToScreen(8)}>
-            Request a callback anyway →
-          </button>
         </div>
       </div>
 
@@ -508,8 +613,10 @@ function App() {
             ⏰ Only 7 seats left · Offer expires in 24 hours
           </div>
           <button className="btn-whatsapp" onClick={handleWhatsAppClick}>
-            <span className="whatsapp-icon">💬</span>
-            Book via WhatsApp Now
+            <svg className="whatsapp-icon" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/>
+            </svg>
+            Book via WhatsApp
           </button>
           <div className="whatsapp-note">
             Instant confirmation · Secure payment · Personal assistance

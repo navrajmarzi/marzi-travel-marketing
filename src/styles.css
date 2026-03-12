@@ -328,6 +328,50 @@ html, body {
   font-size: 16px;
 }
 
+.hero-eligibility-box {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  background: linear-gradient(135deg, rgba(201, 168, 76, 0.18), rgba(201, 168, 76, 0.08));
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1.5px solid rgba(201, 168, 76, 0.4);
+  border-radius: 50px;
+  padding: 10px 20px;
+  margin-bottom: 20px;
+  width: fit-content;
+  box-shadow: 0 6px 24px rgba(201, 168, 76, 0.25);
+  opacity: 0;
+  animation: fadeUp 0.7s 0.65s ease forwards;
+}
+
+.eligibility-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.eligibility-icon {
+  font-size: 16px;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+}
+
+.eligibility-text {
+  font-family: 'Lato', sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--gold-l);
+  letter-spacing: 0.3px;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
+}
+
+.eligibility-sep {
+  color: rgba(201, 168, 76, 0.5);
+  font-size: 12px;
+  font-weight: 700;
+}
+
 .hero-trust-box {
   display: flex;
   align-items: center;
@@ -470,15 +514,15 @@ html, body {
 .btn-main {
   background: linear-gradient(135deg, var(--gold), #9A7010);
   color: var(--teal);
-  font-family: 'Cinzel', serif;
-  font-size: 16px;
-  letter-spacing: 1px;
+  font-family: 'Lato', sans-serif;
+  font-size: 15px;
+  letter-spacing: 0.5px;
   font-weight: 700;
-  padding: 18px 48px;
+  padding: 18px 32px;
   border-radius: 50px;
   border: none;
   cursor: pointer;
-  box-shadow: 0 8px 40px rgba(201, 168, 76, 0.3);
+  box-shadow: 0 10px 40px rgba(201, 168, 76, 0.4);
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   position: relative;
   overflow: hidden;
@@ -490,7 +534,11 @@ html, body {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 12px;
+  gap: 10px;
+  width: 100%;
+  max-width: 340px;
+  margin-left: auto;
+  margin-right: auto;
   flex-shrink: 0;
 }
 
@@ -834,10 +882,11 @@ html, body {
   background: transparent;
   border: 1px solid rgba(201, 168, 76, 0.5);
   color: var(--gold-l);
-  font-family: 'Cinzel', serif;
+  font-family: 'Lato', sans-serif;
   font-size: 14px;
-  letter-spacing: 2px;
-  padding: 16px 44px;
+  font-weight: 700;
+  padding: 16px 36px;
+  border-radius: 50px;
   cursor: pointer;
   transition: all 0.3s;
 }
@@ -882,7 +931,6 @@ html, body {
   color: rgba(255, 253, 248, 0.55);
   margin-bottom: 24px;
   font-weight: 300;
-  line-height: 1.6;
 }
 
 .seat-badge {
@@ -895,6 +943,8 @@ html, body {
   font-size: 15px;
   color: var(--gold-l);
   margin-bottom: 30px;
+  letter-spacing: 0.3px;
+  border-radius: 20px;
 }
 
 .seat-number {
@@ -1442,20 +1492,20 @@ html, body {
   max-width: 380px;
   background: linear-gradient(135deg, #25D366, #128C7E);
   color: white;
-  font-family: 'Cinzel', serif;
-  font-size: 18px;
-  letter-spacing: 1px;
+  font-family: 'Lato', sans-serif;
+  font-size: 15px;
+  letter-spacing: 0.3px;
   font-weight: 700;
-  padding: 20px 32px;
+  padding: 20px 28px;
   border: none;
-  border-radius: 8px;
+  border-radius: 50px;
   cursor: pointer;
   transition: all 0.3s;
-  box-shadow: 0 8px 40px rgba(37, 211, 102, 0.3);
+  box-shadow: 0 10px 40px rgba(37, 211, 102, 0.35);
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 12px;
+  gap: 10px;
   margin: 0 auto 16px;
 }
 
@@ -1586,6 +1636,20 @@ html, body {
     margin-bottom: 16px;
   }
 
+  .hero-eligibility-box {
+    padding: 8px 16px;
+    gap: 10px;
+    margin-bottom: 16px;
+  }
+
+  .eligibility-text {
+    font-size: 12px;
+  }
+
+  .eligibility-icon {
+    font-size: 14px;
+  }
+
   .hero-price-marker {
     padding: 8px 18px;
     margin-bottom: -10px;
@@ -1645,8 +1709,13 @@ html, body {
   }
 
   .btn-whatsapp {
-    font-size: 16px;
+    font-size: 14px;
     padding: 18px 24px;
+  }
+  
+  .whatsapp-icon {
+    width: 20px;
+    height: 20px;
   }
   
   .btn-next {

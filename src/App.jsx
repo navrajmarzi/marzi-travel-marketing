@@ -297,8 +297,7 @@ function App() {
     // 1 second delay to ensure pixel fires and show loading state
     setTimeout(() => {
       const message = encodeURIComponent(`Hi! I'm interested in the Goa Float & Flaunt trip (March 27-30). I'd like to book at the special price of ₹19,999.`)
-      window.open(`https://wa.me/918792237778?text=${message}`, '_blank')
-      setIsWhatsAppLoading(false)
+      window.location.href = `https://wa.me/918792237778?text=${message}`
     }, 1000)
   }
 

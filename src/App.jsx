@@ -293,9 +293,7 @@ function App() {
     }
   }
 
-  const handleWhatsAppClick = () => {
-    setIsWhatsAppLoading(true)
-    
+  const handleWhatsAppClick = (e) => {
     // Track Meta Purchase event only for 50+ age group
     if (answers.q1 === '50plus') {
       trackMetaEvent('Purchase', {
@@ -304,11 +302,15 @@ function App() {
       })
     }
     
-    // 1 second delay to ensure pixel fires and show loading state
+    // Show loading state
+    setIsWhatsAppLoading(true)
+    
+    // Small delay to ensure pixel fires before navigation
+    e.preventDefault()
     setTimeout(() => {
       const message = encodeURIComponent(`Hi! I'm interested in the Goa Float & Flaunt trip (March 27-30). I'd like to book at the special price of ₹19,999.`)
       window.location.href = `https://wa.me/918792237778?text=${message}`
-    }, 1000)
+    }, 800)
   }
 
   const firstName = formData.name.split(' ')[0] || 'friend'
@@ -682,7 +684,11 @@ function App() {
           <div className="urgency-text">
             ⏰ Only 7 seats left · Offer expires in 24 hours
           </div>
-          <button className="btn-whatsapp" onClick={handleWhatsAppClick} disabled={isWhatsAppLoading}>
+          <a 
+            href={`https://wa.me/918792237778?text=${encodeURIComponent(`Hi! I'm interested in the Goa Float & Flaunt trip (March 27-30). I'd like to book at the special price of ₹19,999.`)}`}
+            className={`btn-whatsapp ${isWhatsAppLoading ? 'loading' : ''}`}
+            onClick={handleWhatsAppClick}
+          >
             {isWhatsAppLoading ? (
               <>
                 <div className="whatsapp-spinner"></div>
@@ -696,7 +702,7 @@ function App() {
                 Book via WhatsApp
               </>
             )}
-          </button>
+          </a>
           <div className="whatsapp-note">
             Instant confirmation · Secure payment · Personal assistance
           </div>

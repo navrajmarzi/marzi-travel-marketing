@@ -156,15 +156,19 @@ function App() {
   }, [currentScreen, isTransitioning])
 
   const handleQuizPick = (question, answer) => {
+    if (isTransitioning) return
+    
     setAnswers({ ...answers, [question]: answer })
     trackEvent(`Option Selected: ${answer}`)
     
     if (question === 'q1') {
-      if (answer === 'under40') {
-        goToScreen(6)
-      } else {
-        goToScreen(8)
-      }
+      setTimeout(() => {
+        if (answer === 'under40') {
+          goToScreen(6)
+        } else {
+          goToScreen(8)
+        }
+      }, 300)
     }
   }
 
@@ -474,7 +478,6 @@ function App() {
             >
               <span className="option-icon">🌱</span>
               18-40 years
-              <div className="option-radio" />
             </div>
             <div 
               className={`option ${answers.q1 === '40to50' ? 'selected' : ''}`}
@@ -482,7 +485,6 @@ function App() {
             >
               <span className="option-icon">🌟</span>
               40-50 years
-              <div className="option-radio" />
             </div>
             <div 
               className={`option ${answers.q1 === '50plus' ? 'selected' : ''}`}
@@ -490,7 +492,6 @@ function App() {
             >
               <span className="option-icon">✨</span>
               50+ years
-              <div className="option-radio" />
             </div>
           </div>
         </div>

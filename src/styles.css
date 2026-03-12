@@ -1047,22 +1047,6 @@ html, body {
   flex-shrink: 0;
 }
 
-.option-radio {
-  width: 18px;
-  height: 18px;
-  border-radius: 50%;
-  border: 2px solid rgba(201, 168, 76, 0.35);
-  flex-shrink: 0;
-  margin-left: auto;
-  transition: 0.3s;
-}
-
-.option.selected .option-radio {
-  background: var(--gold);
-  border-color: var(--gold);
-  box-shadow: 0 0 10px rgba(201, 168, 76, 0.5);
-}
-
 /* ══════════════════════════════════════════════════════════════
    NOT QUALIFIED SCREEN
 ══════════════════════════════════════════════════════════════ */

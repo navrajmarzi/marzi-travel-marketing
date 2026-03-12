@@ -891,6 +891,12 @@ html, body {
   transition: all 0.3s;
 }
 
+.next-day-text {
+  color: rgba(255, 253, 248, 0.5);
+  font-weight: 400;
+  font-size: 13px;
+}
+
 .btn-next:hover {
   background: rgba(201, 168, 76, 0.12);
   border-color: var(--gold);
@@ -1499,6 +1505,25 @@ html, body {
   background: linear-gradient(135deg, #128C7E, #25D366);
 }
 
+.btn-whatsapp:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.whatsapp-spinner {
+  width: 20px;
+  height: 20px;
+  border: 3px solid rgba(255, 255, 255, 0.3);
+  border-top-color: white;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
 .whatsapp-icon {
   font-size: 24px;
 }
@@ -1524,7 +1549,67 @@ html, body {
 }
 
 /* ══════════════════════════════════════════════════════════════
-   DESKTOP STYLES
+   LOADING SCREEN
+══════════════════════════════════════════════════════════════ */
+.loading-screen {
+  position: fixed;
+  inset: 0;
+  background: #0A1E1E;
+  z-index: 99999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 1;
+  transition: opacity 0.5s ease;
+}
+
+.loading-screen.fade-out {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.loading-content {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 30px;
+}
+
+.loading-logo {
+  width: 120px;
+  height: auto;
+  opacity: 0.9;
+  animation: pulse 2s ease-in-out infinite;
+}
+
+.loading-bar-container {
+  width: 200px;
+  height: 3px;
+  background: rgba(201, 168, 76, 0.15);
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.loading-bar {
+  height: 100%;
+  background: linear-gradient(90deg, var(--gold), #9A7010);
+  border-radius: 10px;
+  transition: width 0.3s ease;
+  box-shadow: 0 0 10px rgba(201, 168, 76, 0.5);
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 0.7; transform: scale(1); }
+  50% { opacity: 1; transform: scale(1.05); }
+}
+
+@keyframes fadeOut {
+  to { opacity: 0; pointer-events: none; }
+}
+
+/* ══════════════════════════════════════════════════════════════
+   GLOBAL STYLES
 ══════════════════════════════════════════════════════════════ */
 @media (min-width: 768px) {
   .hero-bg {

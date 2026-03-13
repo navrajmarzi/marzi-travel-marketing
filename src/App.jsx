@@ -185,6 +185,11 @@ function App() {
     setIsFlying(true)
     trackCTA('CTA Clicked: Explore Journey')
     trackMetaEvent('AddToCart')
+    
+    if (typeof window !== 'undefined' && window.fbq) {
+      window.fbq('trackCustom', 'CTA_Clicked')
+    }
+    
     setTimeout(() => {
       goToScreen(1)
       setIsFlying(false)

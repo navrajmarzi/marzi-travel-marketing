@@ -903,6 +903,45 @@ html, body {
   transform: translateY(-2px);
 }
 
+.btn-next-glow {
+  background: linear-gradient(135deg, rgba(201, 168, 76, 0.15), rgba(201, 168, 76, 0.05));
+  border-color: var(--gold);
+  animation: glow 2s ease-in-out infinite;
+}
+
+.btn-next-glow:hover {
+  background: linear-gradient(135deg, rgba(201, 168, 76, 0.25), rgba(201, 168, 76, 0.1));
+}
+
+.day4-urgency-strip {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-family: 'Lato', sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  color: rgba(255, 253, 248, 0.7);
+  letter-spacing: 0.3px;
+  margin-bottom: 16px;
+  padding: 8px 16px;
+  background: rgba(201, 168, 76, 0.06);
+  border: 1px solid rgba(201, 168, 76, 0.15);
+  border-radius: 20px;
+  width: fit-content;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.urgency-pulse {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #4CAF50;
+  flex-shrink: 0;
+  animation: pulse-g 1.5s ease-in-out infinite;
+}
+
 /* ══════════════════════════════════════════════════════════════
    TRANSITION SCREEN
 ══════════════════════════════════════════════════════════════ */
@@ -1034,6 +1073,7 @@ html, body {
   color: rgba(255, 253, 248, 0.82);
   font-size: clamp(14px, 2.5vw, 17px);
   line-height: 1.4;
+  border-radius: 10px;
 }
 
 .option:hover {
@@ -1048,9 +1088,63 @@ html, body {
   color: var(--warm);
 }
 
+.option-highlight {
+  background: rgba(201, 168, 76, 0.08);
+  border-color: rgba(201, 168, 76, 0.3);
+}
+
+.option-highlight:hover {
+  background: rgba(201, 168, 76, 0.15);
+  border-color: var(--gold-l);
+}
+
 .option-icon {
   font-size: 22px;
   flex-shrink: 0;
+}
+
+.option-content {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  flex: 1;
+}
+
+.option-main {
+  font-family: 'Lato', sans-serif;
+  font-size: clamp(15px, 2.8vw, 17px);
+  font-weight: 600;
+  color: rgba(255, 253, 248, 0.9);
+}
+
+.option-benefit {
+  font-family: 'Lato', sans-serif;
+  font-size: 12px;
+  color: var(--gold-l);
+  font-weight: 400;
+  letter-spacing: 0.2px;
+}
+
+.age-trust-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(76, 175, 80, 0.08);
+  border: 1px solid rgba(76, 175, 80, 0.25);
+  padding: 8px 16px;
+  border-radius: 20px;
+  font-family: 'Lato', sans-serif;
+  font-size: 12px;
+  color: rgba(129, 199, 132, 0.9);
+  font-weight: 500;
+  letter-spacing: 0.3px;
+  margin-bottom: 24px;
+}
+
+.trust-check {
+  font-size: 14px;
+  font-weight: 700;
+  color: #81C784;
 }
 
 /* ══════════════════════════════════════════════════════════════
@@ -1244,6 +1338,117 @@ html, body {
 
 .badge-shield {
   font-size: 12px;
+}
+
+/* Progressive phone field */
+.phone-field-group {
+  max-height: 0;
+  opacity: 0;
+  overflow: hidden;
+  transition: max-height 0.5s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.4s ease 0.1s, margin 0.4s ease;
+  margin-top: 0 !important;
+}
+
+.phone-field-group.visible {
+  max-height: 120px;
+  opacity: 1;
+  margin-top: 14px !important;
+}
+
+/* Prominent No Spam Badge */
+.no-spam-prominent {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: rgba(76, 175, 80, 0.1);
+  border: 1.5px solid rgba(76, 175, 80, 0.35);
+  padding: 12px 16px;
+  border-radius: 10px;
+  margin-top: 4px;
+}
+
+.nsp-icon {
+  font-size: 20px;
+  flex-shrink: 0;
+}
+
+.nsp-content {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  text-align: left;
+}
+
+.nsp-title {
+  font-family: 'Lato', sans-serif;
+  font-size: 13px;
+  font-weight: 700;
+  color: #81C784;
+  letter-spacing: 0.3px;
+}
+
+.nsp-sub {
+  font-family: 'Lato', sans-serif;
+  font-size: 11px;
+  color: rgba(129, 199, 132, 0.65);
+  font-weight: 400;
+}
+
+/* Form Offer Banner for 50+ users */
+.form-offer-banner {
+  background: linear-gradient(135deg, rgba(201, 168, 76, 0.12), rgba(201, 168, 76, 0.04));
+  border: 1.5px solid rgba(201, 168, 76, 0.35);
+  border-radius: 14px;
+  padding: 16px 20px;
+  margin-bottom: 16px;
+  text-align: center;
+}
+
+.offer-tag {
+  font-family: 'Lato', sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--gold-l);
+  letter-spacing: 0.3px;
+  display: block;
+  margin-bottom: 10px;
+}
+
+.offer-prices {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  margin-bottom: 8px;
+}
+
+.offer-old {
+  font-family: 'Cinzel', serif;
+  font-size: 20px;
+  color: rgba(255, 253, 248, 0.35);
+  text-decoration: line-through;
+  text-decoration-thickness: 2px;
+}
+
+.offer-arrow {
+  font-size: 18px;
+  color: var(--gold);
+}
+
+.offer-new {
+  font-family: 'Cinzel', serif;
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--gold-l);
+  text-shadow: 0 0 16px rgba(201, 168, 76, 0.4);
+}
+
+.offer-save {
+  font-family: 'Lato', sans-serif;
+  font-size: 12px;
+  color: #81C784;
+  font-weight: 500;
+  letter-spacing: 0.2px;
 }
 
 /* Price Animation Overlay */

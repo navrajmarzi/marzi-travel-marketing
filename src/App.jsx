@@ -86,6 +86,7 @@ function App() {
   const [loadingFadeOut, setLoadingFadeOut] = useState(false)
   const [loadingProgress, setLoadingProgress] = useState(0)
   const [isWhatsAppLoading, setIsWhatsAppLoading] = useState(false)
+  const [showPhoneField, setShowPhoneField] = useState(false)
   const particlesRef = useRef(null)
   const TOTAL_SCREENS = 11
 
@@ -162,6 +163,16 @@ function App() {
     if (pageNames[currentScreen]) {
       trackPageVisit(pageNames[currentScreen])
     }
+    
+    // Fire AddToCart when user reaches the age question screen
+    if (currentScreen === 5) {
+      trackMetaEvent('AddToCart')
+    }
+    
+    // Reset phone field visibility when entering form screen
+    if (currentScreen === 8) {
+      setShowPhoneField(false)
+    }
   }, [currentScreen])
 
   // Generate stars for a container
@@ -184,7 +195,7 @@ function App() {
   const handleMainCTA = () => {
     setIsFlying(true)
     trackCTA('CTA Clicked: Explore Journey')
-    trackMetaEvent('AddToCart')
+    trackMetaEvent('ViewContent')
     
     if (typeof window !== 'undefined' && window.fbq) {
       window.fbq('trackCustom', 'CTA_Clicked')
@@ -212,11 +223,27 @@ function App() {
     setAnswers({ ...answers, [question]: answer })
     trackEvent(`Option Selected: ${answer}`)
     
+    // Fire InitiateCheckout + Age_Submitted on age question answer
+    trackMetaEvent('InitiateCheckout')
+    if (typeof window !== 'undefined' && window.fbq) {
+      window.fbq('trackCustom', 'Age_Submitted')
+    }
+    
     if (question === 'q1') {
       setTimeout(() => {
         if (answer === 'under40') {
           goToScreen(6)
+        } else if (answer === '50plus') {
+          // 50+ qualified: show price animation then form
+          setShowPriceAnimation(true)
+          setTimeout(() => {
+            goToScreen(8)
+            setTimeout(() => {
+              setShowPriceAnimation(false)
+            }, 500)
+          }, 2500)
         } else {
+          // 40-50: go directly to form
           goToScreen(8)
         }
       }, 300)
@@ -249,57 +276,48 @@ function App() {
   }
 
   const handleSubmit = async () => {
+    // Always reveal phone field on submit attempt so user sees any errors
+    setShowPhoneField(true)
+    
     const isValid = validateForm()
+    if (!isValid) return
 
-    if (isValid) {
-      setShowPriceAnimation(true)
-      
-      // Send webhook to n8n
-      const now = new Date()
-      const istTime = new Date(now.toLocaleString('en-US', { timeZone: 'Asia/Kolkata' }))
-      const formattedDate = `${String(istTime.getDate()).padStart(2, '0')}-${String(istTime.getMonth() + 1).padStart(2, '0')}-${istTime.getFullYear()}`
-      const formattedTime = istTime.toLocaleTimeString('en-IN', { hour12: false })
-      
-      // Extract all UTM parameters from URL
-      const urlParams = new URLSearchParams(window.location.search)
-      const utmParams = {}
-      for (const [key, value] of urlParams.entries()) {
-        if (key.startsWith('utm_')) {
-          utmParams[key] = value
-        }
+    // Send webhook to n8n
+    const now = new Date()
+    const istTime = new Date(now.toLocaleString('en-US', { timeZone: 'Asia/Kolkata' }))
+    const formattedDate = `${String(istTime.getDate()).padStart(2, '0')}-${String(istTime.getMonth() + 1).padStart(2, '0')}-${istTime.getFullYear()}`
+    const formattedTime = istTime.toLocaleTimeString('en-IN', { hour12: false })
+    
+    // Extract all UTM parameters from URL
+    const urlParams = new URLSearchParams(window.location.search)
+    const utmParams = {}
+    for (const [key, value] of urlParams.entries()) {
+      if (key.startsWith('utm_')) {
+        utmParams[key] = value
       }
-      
-      const webhookPayload = {
-        submitted_time: `${formattedDate} ${formattedTime}`,
-        name: formData.name,
-        number: formData.phone,
-        age_range: getAgeRange(),
-        ...utmParams
-      }
-      
-      try {
-        await fetch('https://marzi.app.n8n.cloud/webhook/ads-lead', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(webhookPayload)
-        })
-      } catch (error) {
-        console.error('Webhook error:', error)
-      }
-      
-      setTimeout(() => {
-        setCurrentScreen(9)
-        setTimeout(() => {
-          setShowPriceAnimation(false)
-        }, 500)
-      }, 2500)
     }
-  }
-
-  const handleWhatsAppClick = (e) => {
-    // Track Meta Purchase event only for 50+ age group
+    
+    const webhookPayload = {
+      submitted_time: `${formattedDate} ${formattedTime}`,
+      name: formData.name,
+      number: formData.phone,
+      age_range: getAgeRange(),
+      ...utmParams
+    }
+    
+    try {
+      await fetch('https://marzi.app.n8n.cloud/webhook/ads-lead', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(webhookPayload)
+      })
+    } catch (error) {
+      console.error('Webhook error:', error)
+    }
+    
+    // Track Meta Purchase for qualified 50+ users
     if (answers.q1 === '50plus') {
       trackMetaEvent('Purchase', {
         name: formData.name,
@@ -307,6 +325,12 @@ function App() {
       })
     }
     
+    setTimeout(() => {
+      setCurrentScreen(9)
+    }, 600)
+  }
+
+  const handleWhatsAppClick = (e) => {
     // Show loading state
     setIsWhatsAppLoading(true)
     
@@ -533,8 +557,12 @@ function App() {
               <span className="act-text">Airport/Station transfer</span>
             </div>
           </div>
-          <button className="btn-next" onClick={() => goToScreen(5)}>
-            Book This Journey &nbsp;→
+          <div className="day4-urgency-strip">
+            <span className="urgency-pulse"></span>
+            Only 7 seats left · 23 people viewing
+          </div>
+          <button className="btn-next btn-next-glow" onClick={() => goToScreen(5)}>
+            Check If You Qualify &nbsp;→
           </button>
         </div>
       </div>
@@ -543,31 +571,43 @@ function App() {
       <div className={`screen quiz-screen ${currentScreen === 5 ? 'active' : ''}`}>
         <div className="quiz-bg" />
         <div className="quiz-inner anim-child">
-          <div className="quiz-step">Question 1</div>
-          <span className="quiz-emoji">🎂</span>
-          <div className="quiz-title">Your age group?</div>
-          <div className="quiz-sub">This helps us personalize your experience.</div>
+          <div className="quiz-step">Quick Eligibility Check</div>
+          <span className="quiz-emoji">✨</span>
+          <div className="quiz-title">Select your age group</div>
+          <div className="quiz-sub">Takes 2 seconds · Instant results</div>
+          <div className="age-trust-badge">
+            <span className="trust-check">✓</span>
+            327 travelers qualified this week
+          </div>
           <div className="options">
             <div 
               className={`option ${answers.q1 === 'under40' ? 'selected' : ''}`}
               onClick={() => handleQuizPick('q1', 'under40')}
             >
               <span className="option-icon">🌱</span>
-              18-40 years
+              <span className="option-content">
+                <span className="option-main">18-40 years</span>
+              </span>
             </div>
             <div 
               className={`option ${answers.q1 === '40to50' ? 'selected' : ''}`}
               onClick={() => handleQuizPick('q1', '40to50')}
             >
               <span className="option-icon">🌟</span>
-              40-50 years
+              <span className="option-content">
+                <span className="option-main">40-50 years</span>
+                <span className="option-benefit">Perfect for this trip</span>
+              </span>
             </div>
             <div 
-              className={`option ${answers.q1 === '50plus' ? 'selected' : ''}`}
+              className={`option option-highlight ${answers.q1 === '50plus' ? 'selected' : ''}`}
               onClick={() => handleQuizPick('q1', '50plus')}
             >
               <span className="option-icon">✨</span>
-              50+ years
+              <span className="option-content">
+                <span className="option-main">50+ years</span>
+                <span className="option-benefit">Special discount available</span>
+              </span>
             </div>
           </div>
         </div>
@@ -623,10 +663,26 @@ function App() {
         <div className="form-bg" />
         <div className="form-wrap">
           <div className="form-header anim-child">
-            <span className="form-header-icon">🌺</span>
-            <div className="trip-date-badge">March 27-30, 2026</div>
-            <div className="form-title">Reserve Your Seat</div>
-            <div className="form-sub">7 spots left</div>
+            {answers.q1 === '50plus' ? (
+              <>
+                <div className="form-offer-banner">
+                  <span className="offer-tag">🎉 You Unlocked a Special Offer</span>
+                  <div className="offer-prices">
+                    <span className="offer-old">₹21,999</span>
+                    <span className="offer-arrow">→</span>
+                    <span className="offer-new">₹19,999</span>
+                  </div>
+                  <span className="offer-save">Save ₹2,000 — fill below to claim</span>
+                </div>
+              </>
+            ) : (
+              <>
+                <span className="form-header-icon">🌺</span>
+                <div className="trip-date-badge">March 27-30, 2026</div>
+              </>
+            )}
+            <div className="form-title">{answers.q1 === '50plus' ? 'Claim Your Discount' : 'Reserve Your Seat'}</div>
+            <div className="form-sub">7 spots left · No payment needed now</div>
           </div>
           <div className="fields anim-child">
             <div className="field-group">
@@ -637,10 +693,15 @@ function App() {
                 placeholder="e.g. Sunita Mehta"
                 autoComplete="name"
                 value={formData.name}
-                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                onChange={(e) => {
+                  setFormData({ ...formData, name: e.target.value })
+                  if (e.target.value.trim().length >= 2 && !showPhoneField) {
+                    setShowPhoneField(true)
+                  }
+                }}
               />
             </div>
-            <div className="field-group">
+            <div className={`field-group phone-field-group ${showPhoneField ? 'visible' : ''}`}>
               <label className="field-label">Phone Number</label>
               <input
                 type="tel"
@@ -656,16 +717,19 @@ function App() {
                 }}
               />
               {formErrors.phone && <div className="error-text">{formErrors.phone}</div>}
-              <div className="no-spam-badge">
-                <span className="badge-shield">🔒</span>
-                100% No Spam Policy
+            </div>
+            <div className="no-spam-prominent">
+              <span className="nsp-icon">🔒</span>
+              <div className="nsp-content">
+                <span className="nsp-title">100% No Spam Policy</span>
+                <span className="nsp-sub">We only call once to confirm your seat</span>
               </div>
             </div>
             <button className="btn-submit" onClick={handleSubmit}>
-              Book This Trip →
+              {answers.q1 === '50plus' ? 'Get My ₹2,000 Discount →' : 'Reserve My Seat — Free →'}
             </button>
             <div className="form-privacy">
-              🔒 We'll call you within 24 hours
+              No payment required · We'll call within 24 hours
             </div>
           </div>
         </div>

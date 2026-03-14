@@ -87,6 +87,8 @@ function App() {
   const [loadingProgress, setLoadingProgress] = useState(0)
   const [isWhatsAppLoading, setIsWhatsAppLoading] = useState(false)
   const [showPhoneField, setShowPhoneField] = useState(false)
+  const [hasTrackedName, setHasTrackedName] = useState(false)
+  const [hasTrackedPhone, setHasTrackedPhone] = useState(false)
   const particlesRef = useRef(null)
   const TOTAL_SCREENS = 11
 
@@ -169,9 +171,11 @@ function App() {
       trackMetaEvent('AddToCart')
     }
     
-    // Reset phone field visibility when entering form screen
+    // Reset tracking and phone field visibility when entering form screen
     if (currentScreen === 8) {
       setShowPhoneField(false)
+      setHasTrackedName(false)
+      setHasTrackedPhone(false)
     }
   }, [currentScreen])
 
@@ -694,8 +698,15 @@ function App() {
                 autoComplete="name"
                 value={formData.name}
                 onChange={(e) => {
-                  setFormData({ ...formData, name: e.target.value })
-                  if (e.target.value.trim().length >= 2 && !showPhoneField) {
+                  const val = e.target.value
+                  setFormData({ ...formData, name: val })
+                  
+                  if (val.length > 0 && !hasTrackedName) {
+                    trackEvent('Name Entered')
+                    setHasTrackedName(true)
+                  }
+                  
+                  if (val.trim().length >= 2 && !showPhoneField) {
                     setShowPhoneField(true)
                   }
                 }}
@@ -710,21 +721,30 @@ function App() {
                 autoComplete="tel"
                 value={formData.phone}
                 onChange={(e) => {
-                  const value = e.target.value.replace(/\D/g, '')
-                  if (value.length <= 10) {
-                    setFormData({ ...formData, phone: value })
+                  const val = e.target.value
+                  const cleanValue = val.replace(/\D/g, '')
+                  
+                  if (val.length > 0 && !hasTrackedPhone) {
+                    trackEvent('Phone Entered')
+                    setHasTrackedPhone(true)
+                  }
+                  
+                  if (cleanValue.length <= 10) {
+                    setFormData({ ...formData, phone: cleanValue })
                   }
                 }}
               />
               {formErrors.phone && <div className="error-text">{formErrors.phone}</div>}
-            </div>
-            <div className="no-spam-prominent">
-              <span className="nsp-icon">🔒</span>
-              <div className="nsp-content">
-                <span className="nsp-title">100% No Spam Policy</span>
-                <span className="nsp-sub">We only call once to confirm your seat</span>
+              
+              <div className="no-spam-prominent">
+                <span className="nsp-icon">🔒</span>
+                <div className="nsp-content">
+                  <span className="nsp-title">100% No Spam Policy</span>
+                  <span className="nsp-sub">We only call once to confirm your seat</span>
+                </div>
               </div>
             </div>
+            
             <button className="btn-submit" onClick={handleSubmit}>
               {answers.q1 === '50plus' ? 'Get My ₹2,000 Discount →' : 'Reserve My Seat — Free →'}
             </button>

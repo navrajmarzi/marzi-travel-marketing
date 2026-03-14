@@ -1350,7 +1350,7 @@ html, body {
 }
 
 .phone-field-group.visible {
-  max-height: 120px;
+  max-height: 200px;
   opacity: 1;
   margin-top: 14px !important;
 }
